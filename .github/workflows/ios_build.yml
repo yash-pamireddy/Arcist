@@ -1,4 +1,4 @@
-name: Build Flutter iOS App
+name: Build iOS Simulator App for Appetize
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build iOS on macOS Runner
+    name: Build iOS Simulator on macOS Runner
     runs-on: macos-latest
 
     steps:
@@ -23,18 +23,16 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Build iOS App (Unsigned)
-        run: flutter build ios --release --no-codesign
+      - name: Build iOS Simulator App
+        run: flutter build ios --simulator
 
-      - name: Package into IPA
+      - name: Compress App Bundle for Appetize
         run: |
-          cd build/ios/iphoneos
-          mkdir Payload
-          mv Runner.app Payload/
-          zip -r arcist-ios-unsigned.ipa Payload
+          cd build/ios/iphonesimulator
+          zip -r ../../../arcist-ios-simulator.zip Runner.app
 
-      - name: Upload IPA Artifact
+      - name: Upload Simulator Zip Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ios-ipa
-          path: build/ios/iphoneos/arcist-ios-unsigned.ipa
+          name: ios-simulator-zip
+          path: arcist-ios-simulator.zip
