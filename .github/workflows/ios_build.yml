@@ -28,7 +28,13 @@ jobs:
 
       - name: Compress App Bundle for Appetize
         run: |
-          cd build/ios/iphonesimulator
+          # Dynamically locate Runner.app regardless of the sub-folder path
+          APP_PATH=$(find build/ios -name "Runner.app" -type d | head -n 1)
+          echo "Found app at: $APP_PATH"
+          
+          # Move into its parent directory and zip it so Runner.app is at the root of the zip
+          PARENT_DIR=$(dirname "$APP_PATH")
+          cd "$PARENT_DIR"
           zip -r ../../../arcist-ios-simulator.zip Runner.app
 
       - name: Upload Simulator Zip Artifact
