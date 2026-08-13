@@ -20,6 +20,9 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Clean Old Builds
+        run: flutter clean
+
       - name: Install Dependencies
         run: flutter pub get
 
@@ -28,14 +31,9 @@ jobs:
 
       - name: Compress App Bundle for Appetize
         run: |
-          # Dynamically locate Runner.app regardless of the sub-folder path
-          APP_PATH=$(find build/ios -name "Runner.app" -type d | head -n 1)
-          echo "Found app at: $APP_PATH"
-          
-          # Move into its parent directory and zip it so Runner.app is at the root of the zip
-          PARENT_DIR=$(dirname "$APP_PATH")
-          cd "$PARENT_DIR"
-          zip -r ../../../arcist-ios-simulator.zip Runner.app
+          cd build/ios/iphonesimulator
+          zip -r arcist-ios-simulator.zip Runner.app
+          mv arcist-ios-simulator.zip ../../../arcist-ios-simulator.zip
 
       - name: Upload Simulator Zip Artifact
         uses: actions/upload-artifact@v4
