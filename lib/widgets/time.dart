@@ -16,8 +16,8 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
   // Zero-lag hardware scale controller
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 25),      // Ultra-fast press down
-    reverseDuration: const Duration(milliseconds: 200), // Instant spring pop back
+    duration: const Duration(milliseconds: 25),
+    reverseDuration: const Duration(milliseconds: 200),
   );
 
   late final Animation<double> _scaleAnimation = Tween<double>(
@@ -27,7 +27,7 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
     CurvedAnimation(
       parent: _controller,
       curve: Curves.linear,
-      reverseCurve: Curves.easeOutBack, // iOS spring overshoot
+      reverseCurve: Curves.easeOutBack,
     ),
   );
 
@@ -78,10 +78,6 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
     hour = hour == 0 ? 12 : hour;
     final minute = _currentTime.minute.toString().padLeft(2, '0');
 
-    const hourRed = Color(0xFFFF3B30);
-    const textWhite = Color(0xFFFFFFFF);
-    const textSubtle = Color(0xFF9E9EA5);
-
     return GestureDetector(
       onTapDown: _handleTapDown,
       onTapUp: (_) => _handleTapRelease(),
@@ -89,20 +85,25 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
       behavior: HitTestBehavior.opaque,
       child: AnimatedBuilder(
         animation: _controller,
-        // Cached child prevents GPU blur re-render lag during scaling
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: child,
+          );
+        },
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(28),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               decoration: BoxDecoration(
                 color: const Color(0xFF111318).withOpacity(0.65),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(28),
                 gradient: LinearGradient(
                   colors: [
-                    Colors.white.withOpacity(0.08),
+                    Colors.white.withOpacity(0.1),
                     Colors.white.withOpacity(0.02),
                   ],
                   begin: Alignment.topLeft,
@@ -110,9 +111,9 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.4),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
+                    color: Colors.black.withOpacity(0.35),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
@@ -127,7 +128,7 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
                       const Text(
                         'Time',
                         style: TextStyle(
-                          color: textSubtle,
+                          color: Colors.white54,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -136,9 +137,9 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
                       Text(
                         formattedDate,
                         style: const TextStyle(
-                          color: textWhite,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -146,22 +147,25 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
                   Text.rich(
                     TextSpan(
                       children: [
+                        const TextSpan(
+                          text: '',
+                        ),
                         TextSpan(
                           text: '$hour',
                           style: const TextStyle(
-                            color: hourRed,
+                            color: Color(0xFFFF3B30),
                           ),
                         ),
                         TextSpan(
                           text: ':$minute $ampm',
                           style: const TextStyle(
-                            color: textWhite,
+                            color: Colors.white,
                           ),
                         ),
                       ],
                     ),
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -170,12 +174,6 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
             ),
           ),
         ),
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
-        },
       ),
     );
   }

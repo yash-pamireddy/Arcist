@@ -1,11 +1,17 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
-import 'time.dart';
+import 'extension_item.dart';
 import 'Pulse.dart';
+import 'time.dart';
 
-// Central Environment Registry: Drop any new widget file in the widgets folder,
-// and import it here to have main.dart automatically manage and render it.
-final List<Widget> widgetRegistryList = [
-  const TimeWidget(),
-  const SizedBox(height: 14),
-  const PulseWidget(),
+List<ExtensionItem> extensionRegistry = [
+  ExtensionItem(name: 'PulseWidget', widget: const PulseWidget()),
+  ExtensionItem(name: 'TimeWidget', widget: const TimeWidget()),
 ];
+
+List<Widget> get widgetRegistryList {
+  return extensionRegistry
+      .where((item) => item.isEnabled)
+      .map((item) => item.widget)
+      .toList();
+}
